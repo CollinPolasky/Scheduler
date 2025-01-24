@@ -54,13 +54,13 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 ## Current State
 
 Resource Calendar View:
-![alt text](<images/Resource Calendar View.png>)
+![alt text](<scheduler/images/Resource Calendar View.png>)
 
 Resource Calendar View - Collapsed:
-![alt text](<images/Resource Calendar View - Collapsed.png>)
+![alt text](<scheduler/images/Resource Calendar View - Collapsed.png>)
 
 Resource Calendar View - Adding Events:
-![alt text](<images/Resource Calendar View - Adding Events.png>)
+![alt text](<scheduler/images/Resource Calendar View - Adding Events.png>)
 
 Resource Calendar View - Deleting Events (Clicking on Event):
-![alt text](<images/Resource Calendar View - Deleting Events.png>)
+![alt text](<scheduler/images/Resource Calendar View - Deleting Events.png>)
