@@ -1,0 +1,116 @@
+<!-- scheduler/templates/scheduler/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scheduler</title>
+</head>
+<body>
+    <h1>Events</h1>
+    <ul>
+        {% for event in events %}
+            <li>{{ event.title }}: {{ event.start_time }} - {{ event.end_time }}</li>
+        {% endfor %}
+    </ul>
+    
+</body>
+<body>
+    {% block content %}
+      <h2>Person List</h2>
+      <ul>
+        {% for person in persons %}
+          <li>{{ person.name }}</li>
+        {% empty %}
+          <li>No Persons have been added yet</li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'add_person' %}">Add Person</a>
+    {% endblock %}
+</body>
+<!-- scheduler/templates/scheduler/index.html -->
+
+<head>
+    <title>Scheduler</title>
+    <link href='https://fullcalendar.io/releases/fullcalendar/3.9.0/fullcalendar.min.css' rel='stylesheet' />
+    <script src='https://fullcalendar.io/releases/fullcalendar/3.9.0/lib/jquery.min.js'></script>
+    <script src='https://fullcalendar.io/releases/fullcalendar/3.9.0/lib/moment.min.js'></script>
+    <script src='https://fullcalendar.io/releases/fullcalendar/3.9.0/fullcalendar.min.js'></script>
+</head>
+<body>
+    <h2>Calendar</h2>
+    <div id='calendar'></div>
+
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: '/events/',
+        selectable: true,
+        timeZone: 'local',
+        select: function(info) {
+            var title = prompt('Enter event title:');
+            if (title) {
+                calendar.addEvent({
+                    title: title,
+                    start: info.start,
+                    end: info.end,
+                    allDay: info.allDay
+                });
+
+                // Send event data to server
+                fetch('/events/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        start: info.start.toISOString(),
+                        end: info.end.toISOString(),
+                        allDay: info.allDay,
+                        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'success') {
+                        console.log('Event created successfully');
+                    } else {
+                        console.error('Error creating event:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+            calendar.unselect()
+        }
+    });
+    calendar.render();
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+</body>
+</html>
